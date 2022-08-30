@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {sortableContainer, sortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
@@ -11,7 +11,11 @@ const SortableContainer = sortableContainer(({children}) => {
 
 class App extends Component {
   state = {
-    collections: [[0, 1, 2], [0, 1, 2, 3, 4], [0, 1, 2]],
+    collections: [
+      [0, 1, 2],
+      [0, 1, 2, 3, 4],
+      [0, 1, 2],
+    ],
   };
 
   onSortEnd = ({oldIndex, newIndex, collection}) => {
@@ -53,4 +57,7 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+root.render(<App />);

@@ -5,11 +5,7 @@ import {storiesOf} from '@storybook/react';
 import style from './Storybook.scss';
 import {SortableContainer, SortableElement, SortableHandle} from '../index';
 import arrayMove from 'array-move';
-import VirtualList from 'react-tiny-virtual-list';
 import {FixedSizeList, VariableSizeList} from 'react-window';
-import {defaultTableRowRenderer, Column, Table, List} from 'react-virtualized';
-import '!style-loader!css-loader!react-virtualized/styles.css';
-import Infinite from 'react-infinite';
 import range from 'lodash/range';
 import random from 'lodash/random';
 import classNames from 'classnames';
@@ -18,7 +14,7 @@ import GroupedItems from './grouping-items';
 import InteractiveElements from './interactive-elements-stress-test';
 
 function getItems(count, height) {
-  var heights = [65, 110, 140, 65, 90, 65];
+  let heights = [65, 110, 140, 65, 90, 65];
   return range(count).map((value) => {
     return {
       value,
@@ -340,55 +336,6 @@ class VirtualizedListWrapper extends Component {
 const SortableVirtualizedList = SortableContainer(VirtualizedListWrapper, {
   withRef: true,
 });
-const SortableTable = SortableContainer(Table, {withRef: true});
-const SortableRowRenderer = SortableElement(defaultTableRowRenderer);
-
-class TableWrapper extends Component {
-  static propTypes = {
-    items: PropTypes.array,
-    className: PropTypes.string,
-    helperClass: PropTypes.string,
-    itemClass: PropTypes.string,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    itemHeight: PropTypes.number,
-    onSortEnd: PropTypes.func,
-  };
-  render() {
-    const {
-      className,
-      height,
-      helperClass,
-      itemClass,
-      itemHeight,
-      items,
-      onSortEnd,
-      width,
-    } = this.props;
-
-    return (
-      <SortableTable
-        getContainer={(wrappedInstance) =>
-          ReactDOM.findDOMNode(wrappedInstance.Grid)
-        }
-        gridClassName={className}
-        headerHeight={itemHeight}
-        height={height}
-        helperClass={helperClass}
-        onSortEnd={onSortEnd}
-        rowClassName={itemClass}
-        rowCount={items.length}
-        rowGetter={({index}) => items[index]}
-        rowHeight={itemHeight}
-        rowRenderer={(props) => <SortableRowRenderer {...props} />}
-        width={width}
-      >
-        <Column label="Index" dataKey="value" width={100} />
-        <Column label="Height" dataKey="height" width={width - 100} />
-      </SortableTable>
-    );
-  }
-}
 
 const SortableInfiniteList = SortableContainer(
   ({className, items, itemClass, isSorting}) => {
