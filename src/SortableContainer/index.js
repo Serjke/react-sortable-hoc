@@ -97,7 +97,9 @@ export default function sortableContainer(
 
         Object.keys(this.events).forEach((key) =>
           events[key].forEach((eventName) =>
-            this.container.addEventListener(eventName, this.events[key], false),
+            this.container.addEventListener(eventName, this.events[key], {
+              passive: false,
+            }),
           ),
         );
 
@@ -260,6 +262,12 @@ export default function sortableContainer(
         const margin = getElementMargin(node);
         const gridGap = getContainerGridGap(this.container);
         const containerBoundingRect = this.scrollContainer.getBoundingClientRect();
+
+        // Need for correct sorting behavior in grid layout with enabled `useWindowAsScrollContainer`
+        if (useWindowAsScrollContainer) {
+          containerBoundingRect.width = this.container.clientWidth;
+        }
+
         const dimensions = getHelperDimensions({index, node, collection});
 
         this.node = node;
@@ -302,7 +310,9 @@ export default function sortableContainer(
           top: window.pageYOffset,
         };
 
-        this.helper = this.helperContainer.appendChild(cloneNode(node));
+        if (!this.helper) {
+          this.helper = this.helperContainer.appendChild(cloneNode(node));
+        }
 
         setInlineStyles(this.helper, {
           boxSizing: 'border-box',
@@ -549,6 +559,7 @@ export default function sortableContainer(
         );
       }
 
+      this.helper = null;
       this.touched = false;
     };
 
@@ -645,9 +656,9 @@ export default function sortableContainer(
 
         // For keyboard sorting, we want user input to dictate the position of the nodes
         const mustShiftBackward =
-          isKeySorting && (index > this.index && index <= prevIndex);
+          isKeySorting && index > this.index && index <= prevIndex;
         const mustShiftForward =
-          isKeySorting && (index < this.index && index >= prevIndex);
+          isKeySorting && index < this.index && index >= prevIndex;
 
         const translate = {
           x: 0,
